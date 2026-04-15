@@ -7,6 +7,7 @@
 ![Next.js](https://img.shields.io/badge/Next.js-15-black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
+[![Live Demo](https://img.shields.io/badge/live-tryaeroflow.dev-8b5cf6)](https://tryaeroflow.dev)
 
 ---
 
@@ -200,7 +201,11 @@ AeroFlow is actively under development.
 
 ---
 
-## Getting Started (Local Development)
+## Getting Started
+
+Live: [tryaeroflow.dev](https://tryaeroflow.dev)
+
+### Local Development
 
 ```bash
 # Clone the repo
@@ -278,3 +283,4 @@ MIT — see [LICENSE](./LICENSE)
 ---
 
 *Built by [Lerena Holloway](https://github.com/lerenah) · AeroFlow — Your specs take flight.*
+[tryaeroflow.dev](https://tryaeroflow.dev)
