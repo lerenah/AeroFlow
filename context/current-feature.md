@@ -2,39 +2,39 @@
 
 <!-- Feature name and short description -->
 
-Homepage — Marketing landing page at the root route.
+Database setup — Prisma 7 + Neon PostgreSQL initial schema 
+and migration.
 
 ## Status
 
 <!-- Not Started | In Progress | Completed -->
-In Progress
+Not Started
 
 
 ## Goals
 
 <!-- Define goals here -->
 
-- Build the AeroFlow marketing homepage at src/app/page.tsx
-- Remove the temporary redirect from / to /dashboard
-- Sections: navbar, hero, problem/solution, features grid,
-  how it works, pricing with toggle, CTA banner, footer
-- Dark mode, mobile responsive, developer aesthetic
+- Create Neon PostgreSQL project with dev and prod branches
+- Install Prisma 7 and initialize
+- Create schema.prisma with full AeroFlow data model
+- Run initial migration on dev branch
+- Verify connection works locally
+- Add DATABASE_URL to .env.local
 
 
 ## Notes
 
 <!-- Additional context here -->
 
-- Read @context/project-overview.md for product details
-  and pricing tiers
-- Design direction: Linear, Vercel, Raycast — clean and minimal
-- Dark background #0a0a0a, purple accent #8b5cf6
-- Item type colors already defined as CSS variables in globals.css
-- Use those variables for the feature cards colored borders
-- Tailwind v4 — NO tailwind.config.ts
-- All buttons and links point to /dashboard for now
-- No auth flows, no API calls, no forms that submit
-- Run npm run build when done and fix all errors
+- Read @context/features/database-spec.md for 
+  full requirements
+- Use the schema already defined in 
+  @context/project-overview.md as the source of truth
+- Prisma 7 has breaking changes — read the upgrade guide
+  before writing any code
+- Always migrate, never db push
+- Do not seed yet — that comes after auth is set up
 
 
 ## History
