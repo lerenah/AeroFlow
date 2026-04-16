@@ -61,7 +61,7 @@ function SidebarInner({ collapsed, onToggle }: SidebarInnerProps) {
 
       {/* ── Logo area ── */}
       <div className="flex h-14 shrink-0 items-center justify-between px-3">
-        <div className="flex items-center gap-2 overflow-hidden">
+        <Link href="/" className="flex items-center gap-2 overflow-hidden">
           {/* Purple logo mark */}
           <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary">
             <Zap className="h-4 w-4 text-white" fill="white" />
@@ -71,7 +71,7 @@ function SidebarInner({ collapsed, onToggle }: SidebarInnerProps) {
               AeroFlow
             </span>
           )}
-        </div>
+        </Link>
 
         {/* Collapse toggle */}
         <Button
