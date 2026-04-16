@@ -1,0 +1,207 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// USER
+// ============================================
+model User {
+  id                   String    @id @default(cuid())
+  email                String    @unique
+  emailVerified        DateTime?
+  name                 String?
+  image                String?
+  password             String?
+  isPro                Boolean   @default(false)
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  items       Item[]
+  collections Collection[]
+  projects    Project[]
+  tags        Tag[]
+  accounts    Account[]
+  sessions    Session[]
+
+  @@map("users")
+}
+
+// ============================================
+// NEXTAUTH MODELS
+// ============================================
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================
+// PROJECT (workspace grouping)
+// ============================================
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  stack       String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items  Item[]
+
+  @@index([userId])
+  @@map("projects")
+}
+
+// ============================================
+// ITEM
+// ============================================
+enum ItemType {
+  PROMPT
+  CONTEXT_FILE
+  FEATURE_SPEC
+  TEMPLATE
+  RESOURCE_LINK
+}
+
+enum SpecStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  DONE
+}
+
+model Item {
+  id          String     @id @default(cuid())
+  itemType    ItemType
+  title       String
+  content     String?    @db.Text
+  url         String?
+  description String?    @db.Text
+  specStatus  SpecStatus?
+  version     Int        @default(1)
+  isFavorite  Boolean    @default(false)
+  isPinned    Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId  String?
+  project    Project?    @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  tags       Tag[]       @relation("ItemTags")
+  collections ItemCollection[]
+  promptRuns  PromptRun[] @relation("PromptRuns")
+
+  @@index([userId])
+  @@index([itemType])
+  @@index([projectId])
+  @@index([createdAt])
+  @@map("items")
+}
+
+// ============================================
+// PROMPT RUN (history of AI executions)
+// ============================================
+model PromptRun {
+  id         String   @id @default(cuid())
+  promptId   String
+  contextIds String[]
+  model      String   @default("gpt-4o-mini")
+  output     String   @db.Text
+  createdAt  DateTime @default(now())
+
+  prompt Item @relation("PromptRuns", fields: [promptId], references: [id], onDelete: Cascade)
+
+  @@index([promptId])
+  @@map("prompt_runs")
+}
+
+// ============================================
+// COLLECTION
+// ============================================
+model Collection {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  isFavorite  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items  ItemCollection[]
+
+  @@index([userId])
+  @@map("collections")
+}
+
+// ============================================
+// ITEM-COLLECTION JOIN TABLE
+// ============================================
+model ItemCollection {
+  itemId       String
+  collectionId String
+  addedAt      DateTime @default(now())
+
+  item       Item       @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@id([itemId, collectionId])
+  @@map("item_collections")
+}
+
+// ============================================
+// TAG
+// ============================================
+model Tag {
+  id     String @id @default(cuid())
+  name   String
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items  Item[] @relation("ItemTags")
+
+  @@unique([name, userId])
+  @@map("tags")
+}
