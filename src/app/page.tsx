@@ -1,8 +1,5 @@
+import { redirect } from "next/navigation";
+
 export default function Home() {
-  return (
-    <main>
-      <h1>AeroFlow</h1>
-      <p>Your specs take flight.</p>
-    </main>
-  );
+  redirect("/dashboard");
 }
